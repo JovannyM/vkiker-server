@@ -36,4 +36,24 @@ export class UserService {
       id: newUser.id,
     };
   }
+
+  async getByName(
+    userDTO: UserAuthDTO,
+  ): Promise<{ access: boolean; message: string; id: string }> {
+    const existingUser = await this.userRepository.findOne({
+      where: { name: userDTO.userName },
+    });
+    if (existingUser) {
+      return {
+        access: true,
+        message: '',
+        id: existingUser.id,
+      };
+    }
+    return {
+      access: false,
+      message: 'User with this name does not exist',
+      id: '0',
+    }
+  }
 }

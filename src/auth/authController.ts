@@ -11,4 +11,9 @@ export class AuthController {
   async createUser(@Body() userDTO: UserAuthDTO) {
     return await this.userService.create(userDTO);
   }
+
+  @Post('authorization')
+  async authorizeUser(@Body() userDTO: UserAuthDTO) {
+    return await this.userService.getByName(userDTO);
+  }
 }
