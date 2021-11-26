@@ -1,0 +1,17 @@
+name: Linter
+
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+
+jobs:
+  runs-on: ubuntu-latest
+  steps:
+      - uses: actions/checkout@v2
+      - name: linter
+      - npm run lint

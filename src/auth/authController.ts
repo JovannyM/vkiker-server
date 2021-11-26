@@ -8,12 +8,17 @@ export class AuthController {
   constructor(private userService: UserService) {}
 
   @Post('registration')
-  async createUser(@Body() userDTO: UserAuthDTO) {
+  async registration(@Body() userDTO: UserAuthDTO) {
     return await this.userService.create(userDTO);
   }
 
   @Get('authorization/:name')
   async authorizeUser(@Param('name') name: string) {
     return await this.userService.getByName(name);
+  }
+
+  @Post('fcm')
+  async updateFCM(@Body() userDTO: UserAuthDTO) {
+    await this.userService.update(userDTO);
   }
 }

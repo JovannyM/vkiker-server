@@ -56,4 +56,19 @@ export class UserService {
       id: '0',
     }
   }
+
+  async update(userDTO: UserAuthDTO) {
+    const existingUser = await this.userRepository.findOne({
+      where: { name: userDTO.userName },
+    });
+    if (!existingUser) {
+      return {
+        access: false,
+        message: 'User with this name not found',
+        id: '0',
+      };
+    }
+    existingUser.fcmToken = userDTO.fcmToken;
+    await this.userRepository.save(existingUser);
+  }
 }
