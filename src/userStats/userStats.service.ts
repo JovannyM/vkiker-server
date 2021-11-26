@@ -36,4 +36,28 @@ export class UserStatsService {
     tot.baseStatsId = baseStatsId;
     return await this.statsTwoOnTwoRepository.save(tot);
   }
+
+  async getBaseStatsById(id: string) {
+    const baseStats = await this.baseStatsRepository.findOne(id);
+    if (baseStats) {
+      return baseStats;
+    }
+    throw new Error(`BaseStats by ID ${id} not found`);
+  }
+
+  async getStatsOneOnOne(id: string) {
+    const statsOneOnOne = await this.statsOneOnOneRepository.findOne(id);
+    if (statsOneOnOne) {
+      return statsOneOnOne;
+    }
+    throw new Error(`StatsOneOnOne by ID ${id} not found`);
+  }
+
+  async getStatsTwoOnTwo(id: string) {
+    const statsTwoOnTwo = await this.statsTwoOnTwoRepository.findOne(id);
+    if (statsTwoOnTwo) {
+      return statsTwoOnTwo;
+    }
+    throw new Error(`StatsOneOnOne by ID ${id} not found`);
+  }
 }
