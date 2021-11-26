@@ -12,6 +12,14 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
+  async getAll() {
+    const users = await this.userRepository.find();
+    return users.map((user) => ({
+      id: user.id,
+      name: user.name,
+    }));
+  }
+
   async create(
     userDTO: UserAuthDTO,
   ): Promise<{ access: boolean; message: string; id: string }> {
@@ -38,7 +46,7 @@ export class UserService {
   }
 
   async getByName(
-    name: string
+    name: string,
   ): Promise<{ access: boolean; message: string; id: string }> {
     const existingUser = await this.userRepository.findOne({
       where: { name },
@@ -54,7 +62,7 @@ export class UserService {
       access: false,
       message: 'User with this name does not exist',
       id: '0',
-    }
+    };
   }
 
   async update(userDTO: UserAuthDTO) {
