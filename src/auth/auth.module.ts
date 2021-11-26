@@ -7,9 +7,9 @@ import { User } from '../entities/user.entity';
 import { StatsOneOnOne } from 'src/entities/statsOneOnOne.entity';
 import { StatsTwoOnTwo } from 'src/entities/statsTwoOnTwo.entity';
 import { BaseStats } from 'src/entities/baseStats.entity';
+import { UserStatsService } from 'src/userStats/userStats.service';
 
 import { AuthController } from './auth.controller';
-import { UserStatsService } from 'src/userStats/userStats.service';
 
 @Module({
   imports: [
@@ -18,4 +18,4 @@ import { UserStatsService } from 'src/userStats/userStats.service';
   controllers: [AuthController],
   providers: [UserService, UserStatsService],
 })
-export class AuthModule { }
+export class AuthModule {}

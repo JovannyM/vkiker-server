@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserStatsService } from 'src/userStats/userStats.service';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UserAuthDTO } from '../dto/userAuthDTO';
 import { User } from '../entities/user.entity';
 
+import { UserStatsService } from 'src/userStats/userStats.service';
+
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    private readonly userStatsService: UserStatsService
-  ) { }
+    private readonly userStatsService: UserStatsService,
+  ) {}
 
   async getAll() {
     const users = await this.userRepository.find();
@@ -48,8 +49,6 @@ export class UserService {
     await this.userStatsService.createStatsOneOnOne(user.id, oooBsId);
     await this.userStatsService.createStatsTwoOnTwo(user.id, totBsId);
     await this.userRepository.save(user);
-
-
 
     const newUser = await this.userRepository.save(user);
     return {
