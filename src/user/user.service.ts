@@ -78,6 +78,14 @@ export class UserService {
     };
   }
 
+  async getById(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (user) {
+      return user;
+    }
+    throw new Error(`User by ID ${id} not found`);
+  }
+
   async update(userDTO: UserAuthDTO) {
     const existingUser = await this.userRepository.findOne({
       where: { name: userDTO.userName },
