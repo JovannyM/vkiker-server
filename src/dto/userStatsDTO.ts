@@ -1,6 +1,8 @@
 export interface UserStatsDTO {
-  id: string;
-  name: string;
+  user: {
+    id: string;
+    name: string;
+  };
   statsOneOnOne: {
     elo: number;
     battles: number;

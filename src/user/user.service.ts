@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { UserAuthDTO } from '../dto/userAuthDTO';
 import { User } from '../entities/user.entity';
+import { UserShortDTO } from '../dto/userShortDTO';
+import { UserStatsDTO } from '../dto/userStatsDTO';
 
 import { UserStatsService } from 'src/userStats/userStats.service';
 
@@ -15,11 +17,19 @@ export class UserService {
     private readonly userStatsService: UserStatsService,
   ) {}
 
-  async getAll() {
+  async getAll(): Promise<UserShortDTO[]> {
     const users = await this.userRepository.find();
-    return users.map((user) => ({
-      id: user.id,
-      name: user.name,
+    const filledUsers = await Promise.all(
+      users.map((user) => this.fillUser(user)),
+    );
+    return filledUsers.map((user) => ({
+      user: {
+        id: user.user.id,
+        name: user.user.name,
+      },
+      elo: user.statsTwoOnTwo.elo,
+      battles: user.statsOneOnOne.battles,
+      wins: user.statsOneOnOne.wins,
     }));
   }
 
@@ -78,12 +88,58 @@ export class UserService {
     };
   }
 
-  async getById(id: string): Promise<User> {
+  async getById(id: string): Promise<UserStatsDTO> {
     const user = await this.userRepository.findOne({ where: { id } });
-    if (user) {
-      return user;
+    if (!user) {
+      throw new Error(`User by ID ${id} not found`);
     }
-    throw new Error(`User by ID ${id} not found`);
+    return this.fillUser(user);
+  }
+
+  async fillUser(user: User): Promise<UserStatsDTO> {
+    const statsOne = await this.userStatsService.getStatsOneOnOne(
+      user.statsOneOnOneId,
+    );
+    statsOne.baseStats = await this.userStatsService.getBaseStatsById(
+      statsOne.baseStatsId,
+    );
+    user.statsOneOnOne = statsOne;
+    const statsTwo = await this.userStatsService.getStatsTwoOnTwo(
+      user.statsTwoOnTwoId,
+    );
+    statsTwo.baseStats = await this.userStatsService.getBaseStatsById(
+      statsTwo.baseStatsId,
+    );
+    user.statsTwoOnTwo = statsTwo;
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+      },
+      statsOneOnOne: {
+        battles: user.statsOneOnOne.battles,
+        elo: user.statsOneOnOne.baseStats.elo,
+        wins: user.statsOneOnOne.wins,
+        goalsScored: user.statsOneOnOne.goalsScored,
+        goalsConceded: user.statsOneOnOne.goalsConceded,
+        averageWinDuration: user.statsOneOnOne.baseStats.averageWinDuration,
+        averageDefeatDuration:
+          user.statsOneOnOne.baseStats.averageDefeatDuration,
+        averageGoalsConcededInWin: user.statsOneOnOne.averageGoalsConcededInWin,
+        averageGoalsScoredInDefeat:
+          user.statsOneOnOne.averageGoalsScoredInDefeat,
+      },
+      statsTwoOnTwo: {
+        elo: user.statsTwoOnTwo.baseStats.elo,
+        battlesInAttack: user.statsTwoOnTwo.battlesInAttack,
+        battlesInDefense: user.statsTwoOnTwo.battlesInDefense,
+        winsInAttack: user.statsTwoOnTwo.winsInAttack,
+        winsInDefense: user.statsTwoOnTwo.winsInDefense,
+        averageWinDuration: user.statsTwoOnTwo.baseStats.averageWinDuration,
+        averageDefeatDuration:
+          user.statsTwoOnTwo.baseStats.averageDefeatDuration,
+      },
+    };
   }
 
   async update(userDTO: UserAuthDTO) {
