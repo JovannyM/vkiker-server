@@ -7,8 +7,8 @@ import { UserService } from '../user/user.service';
 export class AuthController {
   constructor(private userService: UserService) {}
 
-  @Post()
-  async createNewUser(@Body() userDTO: UserAuthDTO) {
+  @Post('registration')
+  async createUser(@Body() userDTO: UserAuthDTO) {
     return await this.userService.create(userDTO);
   }
 }
