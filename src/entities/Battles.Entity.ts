@@ -2,18 +2,18 @@ import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity()
 export class Battles {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'uuid', nullable: false })
   id: string;
 
-  @Column()
+  @Column({ type: 'uuid', nullable: false })
   attackAid: string;
 
-  @Column()
+  @Column({ type: 'uuid', nullable: false })
   attackBid: string;
 
-  @Column()
+  @Column({ type: 'uuid' })
   defenseAid: string;
 
-  @Column()
+  @Column({ type: 'uuid' })
   defenseBid: string;
 }

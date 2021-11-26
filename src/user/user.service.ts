@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UserAuthDTO } from '../dto/userAuthDTO';
-import { User } from '../entities/Users.Entity';
+import { User } from '../entities/user.entity';
+
+import { UserStatsService } from 'src/userStats/userStats.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly userStatsService: UserStatsService,
   ) {}
 
   async getAll() {
@@ -35,8 +38,18 @@ export class UserService {
     }
     const user = new User();
     user.id = uuidv4();
+    const oooBsId = uuidv4();
+    const totBsId = uuidv4();
     user.fcmToken = userDTO.fcmToken;
     user.name = userDTO.userName;
+    user.statsOneOnOneId = user.id;
+    user.statsTwoOnTwoId = user.id;
+    await this.userStatsService.createBaseStats(oooBsId);
+    await this.userStatsService.createBaseStats(totBsId);
+    await this.userStatsService.createStatsOneOnOne(user.id, oooBsId);
+    await this.userStatsService.createStatsTwoOnTwo(user.id, totBsId);
+    await this.userRepository.save(user);
+
     const newUser = await this.userRepository.save(user);
     return {
       access: true,

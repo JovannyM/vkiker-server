@@ -2,15 +2,15 @@ import { Entity, PrimaryColumn, Column } from 'typeorm';
 
 @Entity()
 export class BaseStats {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'uuid', nullable: false })
   id: string;
 
-  @Column()
+  @Column({ default: 0 })
   elo: number;
 
-  @Column()
+  @Column({ default: 0 })
   averageWinDuration: number;
 
-  @Column()
+  @Column({ default: 0 })
   averageDefeatDuration: number;
 }
