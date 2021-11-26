@@ -38,10 +38,10 @@ export class UserService {
   }
 
   async getByName(
-    userDTO: UserAuthDTO,
+    name: string
   ): Promise<{ access: boolean; message: string; id: string }> {
     const existingUser = await this.userRepository.findOne({
-      where: { name: userDTO.userName },
+      where: { name },
     });
     if (existingUser) {
       return {
