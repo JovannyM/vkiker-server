@@ -4,25 +4,28 @@ import { BaseStats } from './baseStats.entity';
 
 @Entity()
 export class StatsOneOnOne {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'uuid', nullable: false })
   id: string;
 
-  @Column()
+  @Column({ type: 'uuid', nullable: false })
+  baseId: string;
+
+  @Column({ default: 0 })
   wins: number;
 
-  @Column()
+  @Column({ default: 0 })
   battles: number;
 
-  @Column()
+  @Column({ default: 0 })
   goalsScored: number;
 
-  @Column()
+  @Column({ default: 0 })
   goalsConceded: number;
 
-  @Column()
+  @Column({ default: 0 })
   averageGoalsConcededInWin: number;
 
-  @Column()
+  @Column({ default: 0 })
   averageGoalsScoredInDefeat: number;
 
   @OneToOne(() => BaseStats)

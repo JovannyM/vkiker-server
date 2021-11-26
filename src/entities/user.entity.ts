@@ -5,8 +5,14 @@ import { StatsTwoOnTwo } from './statsTwoOnTwo.entity';
 
 @Entity()
 export class User {
-  @PrimaryColumn()
+  @PrimaryColumn({ type: 'uuid', nullable: false })
   id: string;
+
+  @PrimaryColumn({ type: 'uuid', nullable: false })
+  statsOneOnOneId: string;
+
+  @PrimaryColumn({ type: 'uuid', nullable: false })
+  statsTwoOnTwoId: string;
 
   @Column()
   fcmToken: string;
@@ -15,10 +21,10 @@ export class User {
   name: string;
 
   @OneToOne(() => StatsOneOnOne)
-  @JoinColumn()
+  @JoinColumn({ name: 'statsOneOnOneId', referencedColumnName: 'id' })
   statsOneOnOne: StatsOneOnOne;
 
   @OneToOne(() => StatsTwoOnTwo)
-  @JoinColumn()
+  @JoinColumn({ name: 'statsTwoToTwoId', referencedColumnName: 'id' })
   statsTwoOnTwo: StatsTwoOnTwo;
 }
