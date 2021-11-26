@@ -9,12 +9,13 @@ import { StatsTwoOnTwo } from 'src/entities/statsTwoOnTwo.entity';
 import { BaseStats } from 'src/entities/baseStats.entity';
 
 import { AuthController } from './auth.controller';
+import { UserStatsService } from 'src/userStats/userStats.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, StatsOneOnOne, StatsTwoOnTwo, BaseStats]),
   ],
   controllers: [AuthController],
-  providers: [UserService],
+  providers: [UserService, UserStatsService],
 })
-export class AuthModule {}
+export class AuthModule { }

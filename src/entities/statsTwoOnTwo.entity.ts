@@ -8,7 +8,7 @@ export class StatsTwoOnTwo {
   id: string;
 
   @Column({ type: 'uuid', nullable: false })
-  baseId: string;
+  baseStatsId: string;
 
   @Column({ default: 0 })
   winsInAttack: number;

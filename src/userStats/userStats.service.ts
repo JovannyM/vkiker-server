@@ -6,7 +6,7 @@ import { StatsTwoOnTwo } from "src/entities/statsTwoOnTwo.entity";
 import { Repository } from "typeorm";
 
 @Injectable()
-export class UserStateService {
+export class UserStatsService {
     constructor(
         @InjectRepository(BaseStats) private readonly baseStatsRepository: Repository<BaseStats>,
         @InjectRepository(StatsOneOnOne) private readonly statsOneOnOneRepository: Repository<StatsOneOnOne>,
@@ -19,15 +19,17 @@ export class UserStateService {
         return await this.baseStatsRepository.save(bs);
     }
 
-    async createOneOnOne(id: string) {
+    async createStatsOneOnOne(id: string, baseStatsId: string) {
         const ooo = new StatsOneOnOne();
         ooo.id = id;
+        ooo.baseStatsId = baseStatsId;
         return await this.statsOneOnOneRepository.save(ooo);
     }
 
-    async createTwoOnTwo(id: string) {
+    async createStatsTwoOnTwo(id: string, baseStatsId: string) {
         const tot = new StatsTwoOnTwo();
         tot.id = id;
+        tot.baseStatsId = baseStatsId;
         return await this.statsTwoOnTwoRepository.save(tot);
     }
 }

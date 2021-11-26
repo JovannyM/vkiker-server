@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserStateService } from 'src/userStats/userStats.service';
+import { UserStatsService } from 'src/userStats/userStats.service';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,7 +11,7 @@ import { User } from '../entities/user.entity';
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    private readonly userStateService: UserStateService
+    private readonly userStatsService: UserStatsService
   ) { }
 
   async getAll() {
@@ -37,13 +37,16 @@ export class UserService {
     }
     const user = new User();
     user.id = uuidv4();
+    const oooBsId = uuidv4();
+    const totBsId = uuidv4();
     user.fcmToken = userDTO.fcmToken;
     user.name = userDTO.userName;
-    const ooo = await this.userStateService.createOneOnOne(user.id);
-    const tot = await this.userStateService.createTwoOnTwo(user.id);
     user.statsOneOnOneId = user.id;
     user.statsTwoOnTwoId = user.id;
-
+    await this.userStatsService.createBaseStats(oooBsId);
+    await this.userStatsService.createBaseStats(totBsId);
+    await this.userStatsService.createStatsOneOnOne(user.id, oooBsId);
+    await this.userStatsService.createStatsTwoOnTwo(user.id, totBsId);
     await this.userRepository.save(user);
 
 

@@ -25,6 +25,6 @@ export class User {
   statsOneOnOne: StatsOneOnOne;
 
   @OneToOne(() => StatsTwoOnTwo)
-  @JoinColumn({ name: 'statsTwoToTwoId', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'statsTwoOnTwoId', referencedColumnName: 'id' })
   statsTwoOnTwo: StatsTwoOnTwo;
 }
