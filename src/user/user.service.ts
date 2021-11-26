@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { UserAuthDTO } from '../dto/userAuthDTO';
-import { User } from '../entities/Users.Entity';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class UserService {

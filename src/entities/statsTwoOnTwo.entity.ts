@@ -1,4 +1,6 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+
+import { BaseStats } from './baseStats.entity';
 
 @Entity()
 export class StatsTwoOnTwo {
@@ -16,4 +18,8 @@ export class StatsTwoOnTwo {
 
   @Column()
   battlesInDefense: number;
+
+  @OneToOne(() => BaseStats)
+  @JoinColumn()
+  baseStats: BaseStats;
 }
