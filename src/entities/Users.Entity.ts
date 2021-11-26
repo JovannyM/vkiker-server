@@ -6,5 +6,8 @@ export class User {
   id: string;
 
   @Column()
+  fcmToken: string;
+
+  @Column()
   name: string;
 }

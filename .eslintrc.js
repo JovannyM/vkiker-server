@@ -52,12 +52,6 @@ module.exports = {
         enforceForRenamedProperties: false,
       },
     ],
-    'no-restricted-imports': [
-      'error',
-      {
-        patterns: ['../*'],
-      },
-    ],
     'import/extensions': [
       'error',
       'ignorePackages',

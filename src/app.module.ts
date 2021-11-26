@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ItemController } from './test.controller';
+import { TestController } from './test.controller';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,8 +17,8 @@ import { ItemController } from './test.controller';
       logging: true,
       autoLoadEntities: true,
     }),
+    AuthModule,
   ],
-  controllers: [ItemController],
-  providers: [],
+  controllers: [TestController],
 })
 export class AppModule {}
