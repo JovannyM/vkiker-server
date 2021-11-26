@@ -1,9 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
 
 @Controller('test')
-export class ItemController {
-  @Get()
-  async getTest() {
-    return { test: 0 };
+export class TestController {
+  @Get('access')
+  async getA() {
+    return { access: true, test: 0, message: '' };
+  }
+
+  @Get('noaccess')
+  async getB() {
+    return { access: false, test: 0, message: 'User not found' };
   }
 }
