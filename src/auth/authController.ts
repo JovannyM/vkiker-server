@@ -8,7 +8,12 @@ export class AuthController {
   constructor(private userService: UserService) {}
 
   @Post('registration')
-  async createUser(@Body() userDTO: UserAuthDTO) {
+  async registration(@Body() userDTO: UserAuthDTO) {
     return await this.userService.create(userDTO);
+  }
+
+  @Post('fcm')
+  async updateFCM(@Body() userDTO: UserAuthDTO) {
+    await this.userService.update(userDTO);
   }
 }
