@@ -135,13 +135,52 @@ export class BattleService {
     }
   }
 
+  private finished = 0;
+  private secondIsWinner = false;
+  private secondIsLoser = false;
+  private winnerId: string;
+  private loserId: string;
+  private goals: number;
+
   async processDuelResult(duelResult: DuelResultDTO) {
-    this.userService.updateAfterDuel(
-      duelResult.winnerId,
-      duelResult.loserId,
-      duelResult.goals,
-      duelResult.duration,
-    );
+    if (this.finished === 0) {
+      this.goals = duelResult.goals;
+    } else {
+      if (this.goals !== duelResult.goals) {
+        return { returnCode: 400 };
+      }
+    }
+
+    if (duelResult.winner) {
+      if (this.secondIsLoser) {
+        return { returnCode: 400 };
+      }
+      this.secondIsLoser = true;
+      this.winnerId = duelResult.id;
+    } else {
+      if (this.secondIsWinner) {
+        return { returnCode: 400 };
+      }
+      this.secondIsWinner = true;
+      this.loserId = duelResult.id;
+    }
+
+    this.finished++;
+
+    if (this.finished === 2) {
+      this.finished = 0;
+      this.secondIsWinner = false;
+      this.secondIsLoser = false;
+      const duration: number =
+        new Date().getTime() - this.lobby.startBattle.getTime();
+      this.userService.updateAfterDuel(
+        this.winnerId,
+        this.loserId,
+        duelResult.goals,
+        duration,
+      );
+      return { returnCode: 200 };
+    }
   }
 
   async getTokenByUserId(userId: string) {

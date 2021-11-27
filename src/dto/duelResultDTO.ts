@@ -1,6 +1,5 @@
 export interface DuelResultDTO {
-    winnerId: string;
-    loserId: string;
+    id: string;
+    winner: boolean;
     goals: number;
-    duration: number;
 }

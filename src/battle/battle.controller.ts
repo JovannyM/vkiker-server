@@ -40,6 +40,6 @@ export class BattleController {
 
   @Post('result')
   async processDuelResult(@Body() duelResult: DuelResultDTO) {
-    await this.battleService.processDuelResult(duelResult);
+    return await this.battleService.processDuelResult(duelResult);
   }
 }
