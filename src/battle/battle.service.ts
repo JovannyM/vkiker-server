@@ -7,6 +7,8 @@ import { User } from '../entities/user.entity';
 import { CreateDuelDTO } from '../dto/createDuelDTO';
 
 import { LobbyObject } from './lobbyObject';
+import { DuelResultDTO } from 'src/dto/duelResultDTO';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class BattleService {
@@ -14,6 +16,7 @@ export class BattleService {
 
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly userService: UserService
   ) {
     this.lobby = new LobbyObject();
   }
@@ -96,6 +99,10 @@ export class BattleService {
       await admin.messaging().sendToDevice(teamA, message);
       await admin.messaging().sendToDevice(teamB, message);
     }
+  }
+
+  async processDuelResult(duelResult: DuelResultDTO) {
+    this.userService.updateAfterDuel(duelResult.winnerId, duelResult.loserId, duelResult.goals, duelResult.duration);
   }
 
   async getTokenByUserId(userId: string) {
