@@ -9,12 +9,16 @@ import { UserShortDTO } from '../dto/userShortDTO';
 import { UserStatsDTO } from '../dto/userStatsDTO';
 
 import { UserStatsService } from 'src/userStats/userStats.service';
+import { StatsOneOnOne } from 'src/entities/statsOneOnOne.entity';
+import { StatsTwoOnTwo } from 'src/entities/statsTwoOnTwo.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly userStatsService: UserStatsService,
+    @InjectRepository(StatsOneOnOne) private readonly statsOneOnOneRepository: Repository<StatsOneOnOne>,
+    @InjectRepository(StatsTwoOnTwo) private readonly statsTwoOnTwoRepository: Repository<StatsTwoOnTwo>,
   ) { }
 
   async getAll(): Promise<UserShortDTO[]> {
@@ -160,15 +164,16 @@ export class UserService {
     const u = await this.userRepository.findOne({
       where: { id },
     });
+    const uooo = await this.statsOneOnOneRepository.findOne(({ where: { id } }));
+    const utot = await this.statsTwoOnTwoRepository.findOne(({ where: { id } }));
     const o = user.statsOneOnOne;
     const t = user.statsTwoOnTwo;
-    const oooBsId = u.statsOneOnOne.baseStats.id;
-    const totBsId = u.statsTwoOnTwo.baseStats.id;
+    const oooBsId = uooo.baseStatsId;
+    const totBsId = utot.baseStatsId;
     await this.userStatsService.updateBaseStats(oooBsId, o.elo, o.averageWinDuration, o.averageDefeatDuration);
     await this.userStatsService.updateBaseStats(totBsId, t.elo, t.averageWinDuration, t.averageDefeatDuration);
     await this.userStatsService.updateStatsOneOnOne(id, oooBsId, o.wins, o.battles, o.goalsScored, o.goalsConceded, o.averageGoalsConcededInWin, o.averageGoalsScoredInDefeat);
     await this.userStatsService.updateStatsTwoOnTwo(id, totBsId, t.winsInAttack, t.battlesInAttack, t.winsInDefense, t.battlesInDefense);
-    await this.userRepository.save(user);
   }
 
   async updateAfterDuel(winnerId: string, loserId: string, goals: number, duration: number) {

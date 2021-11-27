@@ -22,10 +22,10 @@ export class StatsOneOnOne {
   @Column({ default: 0 })
   goalsConceded: number;
 
-  @Column({ default: 0 })
+  @Column({ type: 'real', default: 0 })
   averageGoalsConcededInWin: number;
 
-  @Column({ default: 0 })
+  @Column({ type: 'real', default: 0 })
   averageGoalsScoredInDefeat: number;
 
   @OneToOne(() => BaseStats)
