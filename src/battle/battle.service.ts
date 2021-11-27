@@ -78,11 +78,6 @@ export class BattleService {
     }
   }
 
-  async getTokenByUserId(userId: string) {
-    return (await this.userRepository.findOne({ where: { id: userId } }))
-      .fcmToken;
-  }
-
   async stopBattle(userId: string) {
     if (this.lobby.attackTeamA.userId === userId) {
       this.lobby.attackTeamA.readyToBattle = false;
@@ -103,11 +98,15 @@ export class BattleService {
       const teamB = await this.getTokenByUserId(this.lobby.attackTeamB.userId);
       await admin.messaging().sendToDevice(teamA, message);
       await admin.messaging().sendToDevice(teamB, message);
-      // TODO date;
     }
   }
 
   async processDuelResult(duelResult: DuelResultDTO) {
     this.userService.updateAfterDuel(duelResult.winnerId, duelResult.loserId, duelResult.goals, duelResult.duration);
+  }
+
+  async getTokenByUserId(userId: string) {
+    return (await this.userRepository.findOne({ where: { id: userId } }))
+      .fcmToken;
   }
 }
