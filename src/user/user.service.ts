@@ -9,13 +9,17 @@ import { UserShortDTO } from '../dto/userShortDTO';
 import { UserStatsDTO } from '../dto/userStatsDTO';
 
 import { UserStatsService } from 'src/userStats/userStats.service';
+import { StatsOneOnOne } from 'src/entities/statsOneOnOne.entity';
+import { StatsTwoOnTwo } from 'src/entities/statsTwoOnTwo.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly userStatsService: UserStatsService,
-  ) {}
+    @InjectRepository(StatsOneOnOne) private readonly statsOneOnOneRepository: Repository<StatsOneOnOne>,
+    @InjectRepository(StatsTwoOnTwo) private readonly statsTwoOnTwoRepository: Repository<StatsTwoOnTwo>,
+  ) { }
 
   async getAll(): Promise<UserShortDTO[]> {
     const users = await this.userRepository.find();
@@ -58,7 +62,6 @@ export class UserService {
     await this.userStatsService.createBaseStats(totBsId);
     await this.userStatsService.createStatsOneOnOne(user.id, oooBsId);
     await this.userStatsService.createStatsTwoOnTwo(user.id, totBsId);
-    await this.userRepository.save(user);
 
     const newUser = await this.userRepository.save(user);
     return {
@@ -155,5 +158,45 @@ export class UserService {
     }
     existingUser.fcmToken = userDTO.fcmToken;
     await this.userRepository.save(existingUser);
+  }
+
+  async updateUser(id: string, user: UserStatsDTO) {
+    const u = await this.userRepository.findOne({
+      where: { id },
+    });
+    const uooo = await this.statsOneOnOneRepository.findOne(({ where: { id } }));
+    const utot = await this.statsTwoOnTwoRepository.findOne(({ where: { id } }));
+    const o = user.statsOneOnOne;
+    const t = user.statsTwoOnTwo;
+    const oooBsId = uooo.baseStatsId;
+    const totBsId = utot.baseStatsId;
+    await this.userStatsService.updateBaseStats(oooBsId, o.elo, o.averageWinDuration, o.averageDefeatDuration);
+    await this.userStatsService.updateBaseStats(totBsId, t.elo, t.averageWinDuration, t.averageDefeatDuration);
+    await this.userStatsService.updateStatsOneOnOne(id, oooBsId, o.wins, o.battles, o.goalsScored, o.goalsConceded, o.averageGoalsConcededInWin, o.averageGoalsScoredInDefeat);
+    await this.userStatsService.updateStatsTwoOnTwo(id, totBsId, t.winsInAttack, t.battlesInAttack, t.winsInDefense, t.battlesInDefense);
+  }
+
+  async updateAfterDuel(winnerId: string, loserId: string, goals: number, duration: number) {
+    const winner: UserStatsDTO = await this.getById(winnerId);
+    const loser: UserStatsDTO = await this.getById(loserId);
+    const w = winner.statsOneOnOne;
+    const l = loser.statsOneOnOne;
+    w.elo += (10 - goals + 60000 / duration) ** (0.5 + l.elo / w.elo);
+    l.elo -= (10 - goals + 60000 / duration) ** (l.elo / w.elo);
+    w.averageGoalsConcededInWin = (w.averageGoalsConcededInWin * w.wins + goals) / (w.wins + 1);
+    l.averageGoalsScoredInDefeat = (l.averageGoalsScoredInDefeat * (l.battles - l.wins) + goals) / (l.wins + 1);
+    w.averageWinDuration = (w.averageWinDuration * w.battles + duration) / (w.battles + 1);
+    l.averageDefeatDuration = (l.averageDefeatDuration * l.battles + duration) / (l.battles + 1);
+    w.wins++;
+    w.battles++;
+    l.battles++;
+    w.goalsScored += 10;
+    l.goalsScored += goals;
+    w.goalsConceded += goals;
+    l.goalsConceded += 10;
+    winner.statsOneOnOne = w;
+    loser.statsOneOnOne = l;
+    await this.updateUser(winner.user.id, winner);
+    await this.updateUser(loser.user.id, loser);
   }
 }

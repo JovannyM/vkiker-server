@@ -2,11 +2,13 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 import { CreateDuelDTO } from '../dto/createDuelDTO';
 
+import { DuelResultDTO } from '../dto/duelResultDTO';
+
 import { BattleService } from './battle.service';
 
 @Controller('battle')
 export class BattleController {
-  constructor(private readonly battleService: BattleService) {}
+  constructor(private readonly battleService: BattleService) { }
 
   @Get('lobby')
   async lobbyIsBusy() {
@@ -34,5 +36,10 @@ export class BattleController {
   @Get('stop/:id')
   async stopBattle(@Param('id') userId: string) {
     await this.battleService.stopBattle(userId);
+  }
+
+  @Post('result')
+  async processDuelResult(@Body() duelResult: DuelResultDTO) {
+    await this.battleService.processDuelResult(duelResult);
   }
 }
