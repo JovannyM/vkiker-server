@@ -8,6 +8,11 @@ import { BattleService } from './battle.service';
 export class BattleController {
   constructor(private readonly battleService: BattleService) {}
 
+  @Get('lobby')
+  async lobbyIsBusy() {
+    return await this.battleService.lobbyIsBusy();
+  }
+
   @Post('duel')
   async createDuel(
     @Body() userIds: CreateDuelDTO,

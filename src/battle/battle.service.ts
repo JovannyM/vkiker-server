@@ -18,6 +18,39 @@ export class BattleService {
     this.lobby = new LobbyObject();
   }
 
+  async lobbyIsBusy() {
+    if (this.lobby.isBusy) {
+      const attackTeamA = await this.userRepository.findOne({
+        where: { id: this.lobby.attackTeamA },
+      });
+      const attackTeamB = await this.userRepository.findOne({
+        where: { id: this.lobby.attackTeamB },
+      });
+      const defenceTeamA = await this.userRepository.findOne({
+        where: { id: this.lobby.defenceTeamA },
+      });
+      const defenceTeamB = await this.userRepository.findOne({
+        where: { id: this.lobby.defenceTeamB },
+      });
+      return {
+        access: false,
+        nameAttackA: attackTeamA.name,
+        nameAttackB: attackTeamB.name,
+        nameDefenceA: defenceTeamA.name,
+        nameDefenceB: defenceTeamB.name,
+        time: this.lobby.startBattle,
+      };
+    }
+    return {
+      access: true,
+      nameAttackA: '',
+      nameAttackB: '',
+      nameDefenceA: '',
+      nameDefenceB: '',
+      time: 0,
+    };
+  }
+
   async inviteUserToDuelInFireBase(userIds: CreateDuelDTO) {
     if (this.lobby.isBusy) {
       return { access: false };
