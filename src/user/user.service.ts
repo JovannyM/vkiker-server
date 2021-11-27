@@ -27,7 +27,7 @@ export class UserService {
         id: user.user.id,
         name: user.user.name,
       },
-      elo: user.statsTwoOnTwo.elo,
+      elo: user.statsOneOnOne.elo,
       battles: user.statsOneOnOne.battles,
       wins: user.statsOneOnOne.wins,
     }));
