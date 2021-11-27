@@ -6,9 +6,10 @@ import * as admin from 'firebase-admin';
 import { User } from '../entities/user.entity';
 import { CreateDuelDTO } from '../dto/createDuelDTO';
 
-import { LobbyObject } from './lobbyObject';
 import { DuelResultDTO } from 'src/dto/duelResultDTO';
 import { UserService } from 'src/user/user.service';
+
+import { LobbyObject } from './lobbyObject';
 
 @Injectable()
 export class BattleService {
@@ -16,7 +17,7 @@ export class BattleService {
 
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {
     this.lobby = new LobbyObject();
   }
@@ -135,7 +136,12 @@ export class BattleService {
   }
 
   async processDuelResult(duelResult: DuelResultDTO) {
-    this.userService.updateAfterDuel(duelResult.winnerId, duelResult.loserId, duelResult.goals, duelResult.duration);
+    this.userService.updateAfterDuel(
+      duelResult.winnerId,
+      duelResult.loserId,
+      duelResult.goals,
+      duelResult.duration,
+    );
   }
 
   async getTokenByUserId(userId: string) {
