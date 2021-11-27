@@ -27,7 +27,7 @@ export class BattleController {
   }
 
   @Get('stop/:id')
-  async stopButtle(@Param('id') userId: string) {
+  async stopBattle(@Param('id') userId: string) {
     await this.battleService.stopBattle(userId);
   }
 }

@@ -16,6 +16,7 @@ export class BattleService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {
     this.lobby = new LobbyObject();
+    console.log(this.lobby);
   }
 
   async inviteUserToDuelInFireBase(userIds: CreateDuelDTO) {
@@ -75,11 +76,6 @@ export class BattleService {
     }
   }
 
-  async getTokenByUserId(userId: string) {
-    return (await this.userRepository.findOne({ where: { id: userId } }))
-      .fcmToken;
-  }
-
   async stopBattle(userId: string) {
     if (this.lobby.attackTeamA.userId === userId) {
       this.lobby.attackTeamA.readyToBattle = false;
@@ -100,7 +96,11 @@ export class BattleService {
       const teamB = await this.getTokenByUserId(this.lobby.attackTeamB.userId);
       await admin.messaging().sendToDevice(teamA, message);
       await admin.messaging().sendToDevice(teamB, message);
-      // TODO date;
     }
+  }
+
+  async getTokenByUserId(userId: string) {
+    return (await this.userRepository.findOne({ where: { id: userId } }))
+      .fcmToken;
   }
 }
