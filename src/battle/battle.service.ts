@@ -6,9 +6,10 @@ import * as admin from 'firebase-admin';
 import { User } from '../entities/user.entity';
 import { CreateDuelDTO } from '../dto/createDuelDTO';
 
-import { LobbyObject } from './lobbyObject';
 import { DuelResultDTO } from 'src/dto/duelResultDTO';
 import { UserService } from 'src/user/user.service';
+
+import { LobbyObject } from './lobbyObject';
 
 @Injectable()
 export class BattleService {
@@ -16,7 +17,7 @@ export class BattleService {
 
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {
     this.lobby = new LobbyObject();
   }
@@ -101,38 +102,50 @@ export class BattleService {
     }
   }
 
-  private finished: number = 0;
-  private secondIsWinner: boolean = false;
-  private secondIsLoser: boolean = false;
+  private finished = 0;
+  private secondIsWinner = false;
+  private secondIsLoser = false;
   private winnerId: string;
   private loserId: string;
   private goals: number;
 
   async processDuelResult(duelResult: DuelResultDTO) {
-    if (this.finished == 0) {
+    if (this.finished === 0) {
       this.goals = duelResult.goals;
     } else {
-      if (this.goals != duelResult.goals) return { returnCode: 400 };
+      if (this.goals !== duelResult.goals) {
+        return { returnCode: 400 };
+      }
     }
 
     if (duelResult.winner) {
-      if (this.secondIsLoser) return { returnCode: 400 };
+      if (this.secondIsLoser) {
+        return { returnCode: 400 };
+      }
       this.secondIsLoser = true;
       this.winnerId = duelResult.id;
     } else {
-      if (this.secondIsWinner) return { returnCode: 400 };
+      if (this.secondIsWinner) {
+        return { returnCode: 400 };
+      }
       this.secondIsWinner = true;
       this.loserId = duelResult.id;
     }
 
     this.finished++;
 
-    if (this.finished == 2) {
+    if (this.finished === 2) {
       this.finished = 0;
       this.secondIsWinner = false;
       this.secondIsLoser = false;
-      const duration: number = (new Date()).getTime() - this.lobby.startBattle.getTime();
-      this.userService.updateAfterDuel(this.winnerId, this.loserId, duelResult.goals, duration);
+      const duration: number =
+        new Date().getTime() - this.lobby.startBattle.getTime();
+      this.userService.updateAfterDuel(
+        this.winnerId,
+        this.loserId,
+        duelResult.goals,
+        duration,
+      );
       return { returnCode: 200 };
     }
   }
