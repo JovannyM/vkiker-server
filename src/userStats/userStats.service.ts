@@ -15,11 +15,20 @@ export class UserStatsService {
     private readonly statsOneOnOneRepository: Repository<StatsOneOnOne>,
     @InjectRepository(StatsTwoOnTwo)
     private readonly statsTwoOnTwoRepository: Repository<StatsTwoOnTwo>,
-  ) {}
+  ) { }
 
   async createBaseStats(id: string) {
     const bs = new BaseStats();
     bs.id = id;
+    return await this.baseStatsRepository.save(bs);
+  }
+
+  async updateBaseStats(id: string, elo: number, averageWinDuration: number, averageDefeatDuration: number) {
+    const bs = new BaseStats();
+    bs.id = id;
+    bs.elo = elo;
+    bs.averageWinDuration = averageWinDuration;
+    bs.averageDefeatDuration = averageDefeatDuration;
     return await this.baseStatsRepository.save(bs);
   }
 
@@ -30,10 +39,34 @@ export class UserStatsService {
     return await this.statsOneOnOneRepository.save(ooo);
   }
 
+  async updateStatsOneOnOne(id: string, baseStatsId: string, wins: number, battles: number, goalsScored: number, goalsConceded: number, averageGoalsConcededInWin: number, averageGoalsScoredInDefeat: number) {
+    const ooo = new StatsOneOnOne();
+    ooo.id = id;
+    ooo.baseStatsId = baseStatsId;
+    ooo.wins = wins;
+    ooo.battles = battles;
+    ooo.goalsScored = goalsScored;
+    ooo.goalsConceded = goalsConceded;
+    ooo.averageGoalsConcededInWin = averageGoalsConcededInWin;
+    ooo.averageGoalsScoredInDefeat = averageGoalsScoredInDefeat;
+    return await this.statsOneOnOneRepository.save(ooo);
+  }
+
   async createStatsTwoOnTwo(id: string, baseStatsId: string) {
     const tot = new StatsTwoOnTwo();
     tot.id = id;
     tot.baseStatsId = baseStatsId;
+    return await this.statsTwoOnTwoRepository.save(tot);
+  }
+
+  async updateStatsTwoOnTwo(id: string, baseStatsId: string, winsInAttack: number, battlesInAttack: number, winsInDefense: number, battlesInDefense: number) {
+    const tot = new StatsTwoOnTwo();
+    tot.id = id;
+    tot.baseStatsId = baseStatsId;
+    tot.winsInAttack = winsInAttack;
+    tot.battlesInAttack = battlesInAttack;
+    tot.winsInDefense = winsInDefense;
+    tot.battlesInDefense = battlesInDefense;
     return await this.statsTwoOnTwoRepository.save(tot);
   }
 
