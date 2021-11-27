@@ -16,7 +16,6 @@ export class BattleService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {
     this.lobby = new LobbyObject();
-    console.log(this.lobby);
   }
 
   async inviteUserToDuelInFireBase(userIds: CreateDuelDTO) {
