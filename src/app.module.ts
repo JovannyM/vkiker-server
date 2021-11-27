@@ -5,6 +5,7 @@ import { TestController } from './test.controller';
 import { AuthModule } from './auth/auth.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { UserModule } from './user/user.module';
+import { BattleModule } from './battle/battle.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserModule } from './user/user.module';
     AuthModule,
     LeaderboardModule,
     UserModule,
+    BattleModule,
   ],
   controllers: [TestController],
 })
